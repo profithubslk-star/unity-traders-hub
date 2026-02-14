@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))
+            drop-shadow(0 0 16px rgba(212, 175, 55, 0.6))
+            drop-shadow(0 0 24px rgba(255, 215, 0, 0.4));
+  }
+  15% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 1))
+            drop-shadow(0 0 24px rgba(212, 175, 55, 0.8))
+            drop-shadow(0 0 36px rgba(255, 215, 0, 0.6));
+  }
+  30% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))
+            drop-shadow(0 0 16px rgba(212, 175, 55, 0.6))
+            drop-shadow(0 0 24px rgba(255, 215, 0, 0.4));
+  }
+  45% {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 1))
+            drop-shadow(0 0 32px rgba(212, 175, 55, 0.9))
+            drop-shadow(0 0 48px rgba(255, 215, 0, 0.7));
+  }
+  60% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))
+            drop-shadow(0 0 16px rgba(212, 175, 55, 0.6))
+            drop-shadow(0 0 24px rgba(255, 215, 0, 0.4));
+  }
+}
+
+.neon-lightning {
+  animation: heartbeat 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))
+          drop-shadow(0 0 16px rgba(212, 175, 55, 0.6))
+          drop-shadow(0 0 24px rgba(255, 215, 0, 0.4));
+}
+
+.neon-lightning-static {
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8))
+          drop-shadow(0 0 16px rgba(212, 175, 55, 0.6))
+          drop-shadow(0 0 24px rgba(255, 215, 0, 0.4));
+}
+
+.neon-lightning-no-glow {
+  filter: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-in;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.5s ease-out;
+}
+
+/* Hide any potential watermarks or branding from lightweight-charts */
+div[class*="watermark"],
+div[class*="logo"],
+div[class*="branding"],
+a[href*="tradingview"],
+div[data-name="watermark"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Custom scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.3);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.5);
+  background-clip: padding-box;
+}
+
+/* Firefox scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(6, 182, 212, 0.3) rgba(15, 23, 42, 0.5);
+}
+
+/* Slow spin animation for dev tools */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+input[type="range"].slider-thumb::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #D4AF37, #F4D03F);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  transition: all 0.2s ease;
+}
+
+input[type="range"].slider-thumb::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
+}
+
+input[type="range"].slider-thumb::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #D4AF37, #F4D03F);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  transition: all 0.2s ease;
+}
+
+input[type="range"].slider-thumb::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
+}
+
+input[type="range"].slider-thumb:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+input[type="range"].slider-thumb:disabled::-moz-range-thumb {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
