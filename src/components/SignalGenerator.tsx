@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Zap, Settings, Activity, BarChart3, TrendingUp, Target, CheckCircle2, Crown, Lock } from 'lucide-react';
+import { Zap, Settings, Activity, BarChart3, TrendingUp, Target, CheckCircle2, Crown, Lock, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { generateSignal } from '../utils/signalGenerator';
 import {
@@ -38,6 +38,7 @@ export function SignalGenerator({ onSignalGenerated }: SignalGeneratorProps) {
   const [subscription, setSubscription] = useState<any>(null);
   const [signalsRemaining, setSignalsRemaining] = useState<number | null>(null);
   const [isUnlimited, setIsUnlimited] = useState(false);
+  const [loadingSubscription, setLoadingSubscription] = useState(true);
   const [config, setConfig] = useState<SignalConfig>({
     timeframe: 'M15',
     marketCategory: 'crypto',
@@ -54,10 +55,14 @@ export function SignalGenerator({ onSignalGenerated }: SignalGeneratorProps) {
 
   const fetchSubscriptionInfo = async () => {
     try {
+      setLoadingSubscription(true);
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setLoadingSubscription(false);
+        return;
+      }
 
-      const { data: subData } = await supabase
+      const { data: subData, error: subError } = await supabase
         .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
@@ -65,6 +70,13 @@ export function SignalGenerator({ onSignalGenerated }: SignalGeneratorProps) {
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      if (subError) {
+        console.error('Error fetching subscription:', subError);
+        setError('Failed to load subscription. Please refresh the page.');
+        setLoadingSubscription(false);
+        return;
+      }
 
       if (subData) {
         setSubscription(subData);
@@ -91,9 +103,14 @@ export function SignalGenerator({ onSignalGenerated }: SignalGeneratorProps) {
 
         setSignalsRemaining(limitStatus.signalsRemaining);
         setIsUnlimited(limitStatus.isUnlimited);
+      } else {
+        setError('No active subscription found. Please contact support or try refreshing the page.');
       }
     } catch (err) {
       console.error('Error fetching subscription:', err);
+      setError('Failed to load subscription. Please refresh the page.');
+    } finally {
+      setLoadingSubscription(false);
     }
   };
 
@@ -180,7 +197,7 @@ export function SignalGenerator({ onSignalGenerated }: SignalGeneratorProps) {
       }
 
       if (!subscription) {
-        setError('Unable to verify subscription. Please try again.');
+        setError('Unable to verify subscription. Please refresh the page and try again. If the problem persists, contact support.');
         return;
       }
 
@@ -332,7 +349,12 @@ export function SignalGenerator({ onSignalGenerated }: SignalGeneratorProps) {
             <h3 className="text-lg font-bold text-white">Generate Trading Signal</h3>
             <p className="text-sm text-gray-400">Configure parameters and create professional trading signals</p>
           </div>
-          {subscription && (
+          {loadingSubscription ? (
+            <div className="flex items-center space-x-2 px-4 py-2 bg-[#0F172A] rounded-lg border border-[#D4AF37]/30">
+              <Loader2 className="w-4 h-4 text-[#D4AF37] animate-spin" />
+              <span className="text-sm font-semibold text-white">Loading...</span>
+            </div>
+          ) : subscription && (
             <div className="flex items-center space-x-2 px-4 py-2 bg-[#0F172A] rounded-lg border border-[#D4AF37]/30">
               {isUnlimited ? (
                 <>
