@@ -38,6 +38,8 @@ export function PaymentPage({ onNavigate, selectedPlan }: PaymentPageProps) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    console.log('PaymentPage mounted with selectedPlan:', selectedPlan);
+    console.log('User:', user);
     loadPaymentMethods();
     if (selectedPlan) {
       // For simplicity, assuming 1 USDT = 1 USD, 1 BNB = $600
@@ -96,10 +98,28 @@ export function PaymentPage({ onNavigate, selectedPlan }: PaymentPageProps) {
   };
 
   const createPayment = async () => {
-    if (!selectedPlan || !user) return;
+    console.log('createPayment called');
+    console.log('user:', user);
+    console.log('selectedPlan:', selectedPlan);
+
+    if (!user) {
+      setError('You must be logged in to make a payment. Please sign in and try again.');
+      return;
+    }
+
+    if (!selectedPlan) {
+      setError('No plan selected. Please go back and select a plan.');
+      return;
+    }
 
     setLoading(true);
     setError('');
+    console.log('Creating payment request with:', {
+      planType: selectedPlan.planType,
+      amountUsd: selectedPlan.price,
+      crypto: selectedCrypto,
+      cryptoAmount: cryptoAmount
+    });
 
     try {
       const { data, error } = await supabase.rpc('create_payment_request', {
@@ -111,11 +131,16 @@ export function PaymentPage({ onNavigate, selectedPlan }: PaymentPageProps) {
 
       if (error) throw error;
 
+      if (!data) {
+        throw new Error('Failed to create payment request. Please try again.');
+      }
+
       setPaymentId(data);
       setPaymentStatus('pending');
       setTimeRemaining(1800);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Failed to create payment. Please try again.');
+      console.error('Payment creation error:', err);
     } finally {
       setLoading(false);
     }
@@ -358,6 +383,12 @@ export function PaymentPage({ onNavigate, selectedPlan }: PaymentPageProps) {
                   </div>
                 </div>
               </div>
+
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+                  <p className="text-red-500 text-sm">{error}</p>
+                </div>
+              )}
 
               <button
                 onClick={createPayment}

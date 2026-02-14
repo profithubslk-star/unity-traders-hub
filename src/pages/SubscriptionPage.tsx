@@ -213,6 +213,8 @@ export function SubscriptionPage({ onNavigate, onSelectPlan }: SubscriptionPageP
   };
 
   const handlePlanSelect = async (plan: any) => {
+    console.log('handlePlanSelect called with plan:', plan);
+
     if (plan.price === 0) {
       if (!user) {
         onNavigate('auth');
@@ -221,11 +223,13 @@ export function SubscriptionPage({ onNavigate, onSelectPlan }: SubscriptionPageP
     }
 
     if (!user) {
+      console.log('No user, navigating to auth');
       onNavigate('auth');
       return;
     }
 
     const pricing = planPricing[plan.planType];
+    console.log('Pricing info:', pricing);
 
     if (pricing?.isDowngrade) {
       setLoading(true);
@@ -244,6 +248,7 @@ export function SubscriptionPage({ onNavigate, onSelectPlan }: SubscriptionPageP
         alert('Failed to schedule downgrade. Please try again.');
       }
     } else if (pricing?.isUpgrade) {
+      console.log('Calling onSelectPlan with upgrade info');
       onSelectPlan?.({
         name: plan.name,
         price: pricing.upgradePrice || plan.price,
@@ -256,6 +261,7 @@ export function SubscriptionPage({ onNavigate, onSelectPlan }: SubscriptionPageP
         }
       });
     } else {
+      console.log('Calling onSelectPlan with regular plan');
       onSelectPlan?.({
         name: plan.name,
         price: plan.price,
