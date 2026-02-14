@@ -79,11 +79,11 @@ export function Header({ onNavigate, currentPage }: HeaderProps) {
                 <div className="text-right bg-[#1E293B]/40 backdrop-blur-xl px-4 py-2 rounded-xl border border-[#D4AF37]/20">
                   <div className="text-sm text-gray-400 truncate max-w-[150px]">{user.email}</div>
                   <div className="flex items-center space-x-1">
-                    <div className={`w-2 h-2 rounded-full ${!subscription || subscription?.plan_type === 'demo' ? 'bg-gray-400' : 'bg-[#D4AF37] animate-pulse'}`}></div>
+                    <div className={`w-2 h-2 rounded-full ${subscription?.plan_type === 'demo' || !subscription ? 'bg-gray-400' : 'bg-[#D4AF37] animate-pulse'}`}></div>
                     <div className="text-xs font-bold uppercase" style={{
-                      color: !subscription || subscription?.plan_type === 'demo' ? '#9CA3AF' : '#D4AF37'
+                      color: subscription?.plan_type === 'demo' || !subscription ? '#9CA3AF' : '#D4AF37'
                     }}>
-                      {!subscription ? 'Loading...' : subscription?.plan_type === 'demo' ? 'Demo' : 'VIP'}
+                      {subscription?.plan_type === 'demo' || !subscription ? 'Demo' : 'VIP'}
                     </div>
                   </div>
                 </div>
@@ -225,7 +225,7 @@ export function Header({ onNavigate, currentPage }: HeaderProps) {
                 <div className="px-5 py-3 bg-[#1E293B]/40 backdrop-blur-xl rounded-xl border border-[#D4AF37]/20 mt-4">
                   <div className="text-sm text-gray-400">{user.email}</div>
                   <div className="text-xs text-[#D4AF37] font-bold mt-1 uppercase">
-                    {!subscription ? 'Loading...' : subscription?.plan_type === 'demo' ? 'Demo Account' : 'VIP Member'}
+                    {subscription?.plan_type === 'demo' || !subscription ? 'Demo Account' : 'VIP Member'}
                   </div>
                 </div>
                 <button

@@ -73,9 +73,6 @@ export function SignalGenerator({ onSignalGenerated }: SignalGeneratorProps) {
 
       if (subError) {
         console.error('Error fetching subscription:', subError);
-        setError('Failed to load subscription. Please refresh the page.');
-        setLoadingSubscription(false);
-        return;
       }
 
       if (subData) {
@@ -104,11 +101,40 @@ export function SignalGenerator({ onSignalGenerated }: SignalGeneratorProps) {
         setSignalsRemaining(limitStatus.signalsRemaining);
         setIsUnlimited(limitStatus.isUnlimited);
       } else {
-        setError('No active subscription found. Please contact support or try refreshing the page.');
+        const demoSub = {
+          plan_type: 'demo',
+          status: 'active',
+          signals_viewed_count: 0,
+          user_id: user.id
+        };
+        setSubscription(demoSub);
+
+        const limits = getSubscriptionLimits('demo');
+        setMaxAllowedConfidence(limits.maxConfidenceLevel);
+
+        const { count } = await supabase
+          .from('user_signals')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id);
+
+        const totalSignals = count || 0;
+        const limitStatus = checkSignalLimitStatus('demo', 0, totalSignals);
+
+        setSignalsRemaining(limitStatus.signalsRemaining);
+        setIsUnlimited(limitStatus.isUnlimited);
       }
     } catch (err) {
       console.error('Error fetching subscription:', err);
-      setError('Failed to load subscription. Please refresh the page.');
+      const demoSub = {
+        plan_type: 'demo',
+        status: 'active',
+        signals_viewed_count: 0,
+        user_id: user?.id || ''
+      };
+      setSubscription(demoSub);
+      setMaxAllowedConfidence(60);
+      setSignalsRemaining(3);
+      setIsUnlimited(false);
     } finally {
       setLoadingSubscription(false);
     }

@@ -23,15 +23,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchSubscription = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .maybeSingle();
+    try {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'active')
+        .maybeSingle();
 
-    if (!error && data) {
-      setSubscription(data as Subscription);
+      if (error) {
+        console.error('Error fetching subscription:', error);
+        setSubscription(null);
+        return;
+      }
+
+      if (data) {
+        setSubscription(data as Subscription);
+      } else {
+        setSubscription(null);
+      }
+    } catch (err) {
+      console.error('Exception fetching subscription:', err);
+      setSubscription(null);
     }
   };
 
