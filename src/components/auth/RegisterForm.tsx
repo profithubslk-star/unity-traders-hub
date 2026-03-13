@@ -8,9 +8,9 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onToggleForm, onSuccess }: RegisterFormProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('admin@unitytraders.com');
+  const [password, setPassword] = useState('Admin123456!');
+  const [confirmPassword, setConfirmPassword] = useState('Admin123456!');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
