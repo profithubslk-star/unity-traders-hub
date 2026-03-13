@@ -82,45 +82,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
-    if (error) {
-      return { error };
-    }
-
-    if (data.user) {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const { error: subError } = await supabase
-          .from('subscriptions')
-          .insert({
-            user_id: data.user.id,
-            plan_type: 'demo',
-            status: 'active',
-            end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          });
-
-        if (subError) {
-          console.warn('Could not create demo subscription:', subError);
-        }
-      } catch (err) {
-        console.warn('Error creating demo subscription:', err);
+      if (error) {
+        console.error('Supabase signUp error:', error);
+        return { error };
       }
-    }
 
-    return { error: null };
+      if (data.user) {
+        try {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          const { error: subError } = await supabase
+            .from('subscriptions')
+            .insert({
+              user_id: data.user.id,
+              plan_type: 'demo',
+              status: 'active',
+              end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            });
+
+          if (subError) {
+            console.warn('Could not create demo subscription:', subError);
+          }
+        } catch (err) {
+          console.warn('Error creating demo subscription:', err);
+        }
+      }
+
+      return { error: null };
+    } catch (err) {
+      console.error('Network error during signup:', err);
+      return { error: { message: 'Network error. Please check your connection and try again.' } };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      return { error };
+    } catch (err) {
+      console.error('Network error during signin:', err);
+      return { error: { message: 'Network error. Please check your connection and try again.' } };
+    }
   };
 
   const signOut = async () => {
