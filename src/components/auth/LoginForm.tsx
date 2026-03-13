@@ -19,13 +19,23 @@ export function LoginForm({ onToggleForm, onSuccess }: LoginFormProps) {
     setError('');
     setLoading(true);
 
-    const { error } = await signIn(email, password);
+    console.log('Attempting login with:', email);
 
-    if (error) {
-      setError(error.message);
+    try {
+      const { error } = await signIn(email, password);
+
+      if (error) {
+        console.error('Login error:', error);
+        setError(error.message || 'Failed to sign in. Please check your credentials.');
+        setLoading(false);
+      } else {
+        console.log('Login successful!');
+        onSuccess?.();
+      }
+    } catch (err) {
+      console.error('Unexpected login error:', err);
+      setError('An unexpected error occurred. Please try again.');
       setLoading(false);
-    } else {
-      onSuccess?.();
     }
   };
 
