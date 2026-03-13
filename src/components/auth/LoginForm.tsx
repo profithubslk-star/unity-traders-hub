@@ -8,8 +8,8 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onToggleForm, onSuccess }: LoginFormProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@unitytraders.com');
+  const [password, setPassword] = useState('Admin123456!');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { signIn } = useAuth();
